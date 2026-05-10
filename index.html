@@ -1,1056 +1,1560 @@
-<!DOCTYPE html><html lang="ru">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mir Power — Xususiy Bandlik Agentligi</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, Helvetica, sans-serif;
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #2dd4bf;
+      --teal2: #14b8a6;
+      --blue: #2563eb;
+      --bg: #070d1a;
+      --bg2: #0d1628;
+      --bg3: #111827;
+      --bg4: #1a2236;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --muted2: #cbd5e1;
+      --font-head: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --radius: 16px;
+      --radius2: 24px;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
-      background: #0b1220;
-      color: #ffffff;
-      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.65;
+      overflow-x: hidden;
     }
 
-    a {
-      color: inherit;
-      text-decoration: none;
+    a { color: inherit; text-decoration: none; }
+
+    .container { width: min(1140px, 92%); margin: 0 auto; }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(45,212,191,.35); }
+      50%      { box-shadow: 0 0 0 10px rgba(45,212,191,0); }
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes countUp { from { opacity:0; transform:scale(.7); } to { opacity:1; transform:scale(1); } }
+    @keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes dotBounce {
+      0%,80%,100%{transform:scale(0)} 40%{transform:scale(1)}
     }
 
-    .container {
-      width: min(1150px, 92%);
-      margin: 0 auto;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(22px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes onlinePulse {
-      0%, 100% {
-        box-shadow: 0 0 10px rgba(74, 222, 128, 0.25);
-      }
-      50% {
-        box-shadow: 0 0 28px rgba(74, 222, 128, 0.55);
-      }
-    }
-
+    /* ── HEADER ── */
     header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(11, 18, 32, 0.92);
-      backdrop-filter: blur(14px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(7,13,26,.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
     }
 
     .nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 15px 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 0; gap: 16px;
     }
 
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 900;
-      font-size: 22px;
-      letter-spacing: 0.4px;
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font-head); font-weight: 900; font-size: 22px;
+    }
+    .logo-img {
+      width: 46px; height: 46px; border-radius: 14px; overflow: hidden;
+      background: #fff; flex-shrink: 0;
+      box-shadow: 0 8px 24px rgba(45,212,191,.25);
+    }
+    .logo-img img { width:100%; height:100%; object-fit:cover; }
+
+    .nav-center { display:flex; gap:28px; }
+    .nav-center a {
+      color: var(--muted); font-size: 14px; font-weight: 500;
+      transition: color .2s; letter-spacing: .3px;
+    }
+    .nav-center a:hover { color: var(--teal); }
+
+    .nav-right { display:flex; align-items:center; gap:12px; }
+
+    .lang-switcher { display:flex; gap:4px; }
+    .lang-btn {
+      padding: 6px 10px; border:1px solid var(--border); border-radius: 10px;
+      background: none; color: var(--muted); cursor: pointer; font-size: 13px;
+      font-family: var(--font-body); transition: .2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      border-color: var(--teal); color: var(--teal);
+      background: rgba(45,212,191,.08);
     }
 
-    .logo-mark {
-      width: 48px;
-      height: 48px;
-      border-radius: 15px;
-      overflow: hidden;
-      background: #fff;
-      display: grid;
-      place-items: center;
-      box-shadow: 0 12px 30px rgba(37,99,235,0.35);
+    .burger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
     }
-
-    .logo-mark img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .burger span {
+      display: block; width: 24px; height: 2px;
+      background: var(--text); border-radius: 2px;
+      transition: .3s;
     }
+    .burger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
+    /* Mobile drawer */
+    .mobile-menu {
+      display: none; flex-direction: column;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 0; max-height: 0; overflow: hidden;
+      transition: max-height .35s ease, padding .35s;
     }
-
-    .lang {
-      display: flex;
-      gap: 8px;
+    .mobile-menu.open { max-height: 400px; padding: 16px 0; }
+    .mobile-menu a {
+      padding: 12px 24px; color: var(--muted2); font-size: 16px;
+      border-left: 3px solid transparent; transition: .2s;
     }
+    .mobile-menu a:hover { color: var(--teal); border-color: var(--teal); background: rgba(45,212,191,.04); }
+    .mobile-menu .lang-row { display:flex; gap:8px; padding: 12px 24px; }
 
-    .lang button {
-      padding: 8px 11px;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      background: rgba(255,255,255,0.08);
+    /* ── STATS TICKER ── */
+    .stats-bar {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      padding: 10px 0;
+    }
+    .stats-bar-inner {
+      display: flex; gap: 32px; justify-content: center; flex-wrap: wrap;
+      font-size: 13px; color: var(--muted);
+    }
+    .stats-bar-inner span { display:flex; align-items:center; gap:6px; }
+    .stats-bar-inner b { color: var(--teal); font-family: var(--font-head); font-size: 15px; }
+
+    /* ── BTN ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 12px 22px; border-radius: var(--radius); font-weight: 600;
+      font-family: var(--font-body); font-size: 15px; cursor: pointer;
+      border: 1px solid transparent; transition: .25s; white-space: nowrap;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--teal), var(--blue));
       color: #fff;
-      font-weight: 800;
+      box-shadow: 0 10px 30px rgba(37,99,235,.28);
     }
-
-    .nav-links {
-      display: flex;
-      gap: 22px;
-      color: #cbd5e1;
-      font-size: 15px;
+    .btn-secondary {
+      background: rgba(255,255,255,.07); border-color: var(--border2); color: var(--text);
     }
+    .btn-ghost { background: none; color: var(--teal); padding: 10px 16px; }
+    .btn-sm { padding: 8px 16px; font-size: 14px; }
 
-    .nav-links a:hover {
-      color: #2dd4bf;
-    }
-
+    /* ── HERO ── */
     .hero {
-      position: relative;
-      overflow: hidden;
-      padding: 80px 0 70px;
+      position: relative; overflow: hidden;
+      padding: 90px 0 80px;
     }
-
-    .hero:before {
+    .hero::before {
       content: "";
-      position: absolute;
-      width: 620px;
-      height: 620px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(45,212,191,0.24), transparent 68%);
-      top: -230px;
-      right: -160px;
-      z-index: -1;
+      position: absolute; width: 700px; height: 700px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(45,212,191,.15), transparent 65%);
+      top: -250px; right: -200px; z-index: 0; pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute; width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(37,99,235,.12), transparent 65%);
+      bottom: -150px; left: -100px; z-index: 0; pointer-events: none;
     }
 
     .hero-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 42px;
-      align-items: center;
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1.1fr 0.9fr;
+      gap: 50px; align-items: center;
     }
 
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(45,212,191,0.12);
-      border: 1px solid rgba(45,212,191,0.3);
-      color: #99f6e4;
-      font-weight: 800;
-      margin-bottom: 18px;
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px; border-radius: 999px;
+      background: rgba(45,212,191,.1); border: 1px solid rgba(45,212,191,.25);
+      color: #99f6e4; font-size: 13px; font-weight: 600;
+      margin-bottom: 20px; letter-spacing: .3px;
     }
 
     h1 {
-      font-size: clamp(38px, 6vw, 66px);
-      line-height: 1.05;
-      margin-bottom: 20px;
-      letter-spacing: -1px;
+      font-family: var(--font-head);
+      font-size: clamp(38px, 5.5vw, 64px);
+      line-height: 1.05; letter-spacing: -1.5px;
+      margin-bottom: 22px;
     }
+    .highlight { color: var(--teal); }
 
-    .highlight {
-      color: #2dd4bf;
+    .hero-desc { font-size: 17px; color: var(--muted2); margin-bottom: 32px; max-width: 560px; }
+
+    .hero-actions { display:flex; flex-wrap:wrap; gap:12px; margin-bottom: 36px; }
+
+    .hero-stats {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
     }
-
-    .hero p {
-      font-size: 18px;
-      color: #cbd5e1;
-      max-width: 650px;
-      margin-bottom: 28px;
+    .hero-stat {
+      padding: 16px 18px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
     }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 13px;
-      margin-bottom: 24px;
+    .hero-stat strong {
+      display: block; font-family: var(--font-head);
+      font-size: 26px; font-weight: 900; color: #fff;
     }
+    .hero-stat span { font-size: 13px; color: var(--muted); }
 
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 13px 20px;
-      border-radius: 14px;
-      font-weight: 900;
-      transition: 0.25s;
-      border: 1px solid transparent;
-      cursor: pointer;
+    /* Countries card */
+    .countries-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.09), rgba(255,255,255,.03));
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+      animation: fadeUp .8s ease both .2s;
     }
-
-    .btn:hover {
-      transform: translateY(-3px);
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #2dd4bf, #2563eb);
-      color: #fff;
-      box-shadow: 0 16px 35px rgba(37,99,235,0.32);
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.14);
-      color: #fff;
-    }
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 13px;
-    }
-
-    .stat {
-      padding: 17px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 18px;
-    }
-
-    .stat strong {
-      display: block;
-      font-size: 25px;
-      color: #fff;
-    }
-
-    .stat span {
-      color: #94a3b8;
-      font-size: 14px;
-    }
-
-    .hero-card,
-    .info-card,
-    .admin-box,
-    .ai-box {
-      background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 26px;
-      box-shadow: 0 25px 65px rgba(0,0,0,0.3);
-      animation: fadeIn 0.8s ease both;
-    }
-
-    .hero-card {
-      padding: 26px;
-    }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 20px;
-    }
-
-    .country-list {
-      display: grid;
-      gap: 12px;
-      max-height: 540px;
-      overflow: auto;
-      padding-right: 4px;
-    }
-
-    .country {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      padding: 14px 15px;
-      border-radius: 17px;
-      background: rgba(15,23,42,0.72);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .country span {
-      color: #2dd4bf;
-      font-weight: 900;
-      font-size: 13px;
-    }
-
-    section {
-      padding: 66px 0;
-    }
-
-    .section-title {
-      text-align: center;
-      margin-bottom: 38px;
-    }
-
-    .section-title h2 {
-      font-size: clamp(30px, 4vw, 46px);
-      margin-bottom: 10px;
-    }
-
-    .section-title p {
-      color: #94a3b8;
-      max-width: 720px;
-      margin: 0 auto;
-      font-size: 17px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .info-card {
-      padding: 25px;
-      background: #111827;
-    }
-
-    .icon {
-      width: 54px;
-      height: 54px;
-      border-radius: 18px;
-      display: grid;
-      place-items: center;
-      background: rgba(45,212,191,0.12);
-      color: #2dd4bf;
-      font-size: 25px;
+    .card-head {
+      display:flex; justify-content:space-between; align-items:center;
       margin-bottom: 16px;
     }
+    .card-head h3 { font-family: var(--font-head); font-size: 18px; }
 
-    .info-card h3 {
-      font-size: 21px;
-      margin-bottom: 10px;
+    .country-list { display:grid; gap:8px; max-height: 480px; overflow-y:auto; padding-right:4px; }
+    .country-list::-webkit-scrollbar { width:4px; }
+    .country-list::-webkit-scrollbar-track { background: transparent; }
+    .country-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius:4px; }
+    .country-item {
+      display:flex; justify-content:space-between; align-items:center;
+      padding: 12px 14px; border-radius: 12px;
+      background: rgba(255,255,255,.04); border: 1px solid var(--border);
+      transition: border-color .2s, background .2s;
+    }
+    .country-item:hover { border-color: rgba(45,212,191,.3); background: rgba(45,212,191,.05); }
+    .country-item .flag-name { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:500; }
+    .country-item .salary { color: var(--teal); font-size: 12px; font-weight: 700; }
+
+    /* ── SECTIONS ── */
+    section { padding: 72px 0; }
+
+    .sec-title { text-align:center; margin-bottom: 42px; }
+    .sec-title h2 {
+      font-family: var(--font-head);
+      font-size: clamp(28px,4vw,44px);
+      margin-bottom: 12px; letter-spacing: -1px;
+    }
+    .sec-title p { color: var(--muted); max-width: 620px; margin: 0 auto; font-size: 16px; }
+
+    /* ── CARDS GRID ── */
+    .grid3 { display:grid; grid-template-columns: repeat(3,1fr); gap:20px; }
+    .grid4 { display:grid; grid-template-columns: repeat(4,1fr); gap:20px; }
+
+    .card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      padding: 26px;
+      transition: border-color .25s, transform .25s;
+    }
+    .card:hover { border-color: rgba(45,212,191,.3); transform: translateY(-4px); }
+
+    .card-icon {
+      width: 52px; height: 52px; border-radius: 16px;
+      background: rgba(45,212,191,.1);
+      display: grid; place-items: center;
+      font-size: 24px; margin-bottom: 16px;
+    }
+    .card h3 { font-family: var(--font-head); font-size: 19px; margin-bottom: 10px; }
+    .card p, .card li { color: var(--muted2); font-size: 15px; }
+
+    /* ── JOB CARDS ── */
+    .filter-bar { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:28px; }
+    .filter-btn {
+      padding: 8px 18px; border-radius: 999px; font-size: 14px; font-weight: 500;
+      background: rgba(255,255,255,.07); border: 1px solid var(--border2);
+      color: var(--muted2); cursor: pointer; transition: .2s; font-family: var(--font-body);
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(45,212,191,.12); border-color: rgba(45,212,191,.4); color: var(--teal);
     }
 
-    .info-card p,
-    .info-card li {
-      color: #cbd5e1;
+    .job-card { display:flex; flex-direction:column; gap:14px; }
+    .job-card.hide { display:none; }
+    .job-meta { display:grid; gap:8px; flex:1; }
+    .job-meta-item {
+      background: rgba(255,255,255,.05); border-radius: 10px;
+      padding: 10px 12px; font-size: 14px; color: var(--muted2);
     }
+    .job-meta-item b { color: var(--text); }
 
-    .filter-bar {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 30px;
-    }
-
-    .job-card.hide {
-      display: none;
-    }
-
-    .job-meta {
-      margin-top: 12px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .job-meta div {
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 10px 12px;
-      color: #e2e8f0;
-    }
-
-    .admin-box {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 28px;
-      background: #111827;
-    }
-
-    .admin-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 13px;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 14px;
-      border-radius: 13px;
-      border: 1px solid rgba(255,255,255,0.1);
-      outline: none;
-      background: #0f172a;
-      color: #fff;
-      font-size: 15px;
-    }
-
-    textarea {
-      grid-column: 1 / 3;
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .admin-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .admin-note {
-      color: #94a3b8;
-      font-size: 14px;
-      margin-top: 12px;
-    }
-
-    .steps {
-      counter-reset: step;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-
+    /* ── STEPS ── */
+    .steps { display:grid; grid-template-columns: repeat(4,1fr); gap:20px; }
     .step {
-      background: #111827;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 22px;
-      padding: 25px;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius2); padding: 26px; position: relative;
     }
-
-    .step:before {
-      counter-increment: step;
-      content: counter(step);
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: #2dd4bf;
-      color: #08111f;
-      font-weight: 900;
-      margin-bottom: 16px;
+    .step-num {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      display: grid; place-items: center;
+      font-family: var(--font-head); font-weight: 900; font-size: 18px;
+      color: #fff; margin-bottom: 16px;
     }
+    .step h3 { font-family: var(--font-head); font-size: 18px; margin-bottom: 8px; }
+    .step p { color: var(--muted); font-size: 14px; }
 
-    .step p {
-      color: #94a3b8;
-      font-size: 15px;
-    }
-
+    /* ── AI CHAT ── */
+    .ai-section { background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
     .ai-box {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 26px;
-      background: #111827;
+      max-width: 740px; margin: 0 auto;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius2); overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    }
+    .ai-header {
+      padding: 16px 20px; background: rgba(255,255,255,.04);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .ai-avatar {
+      width: 38px; height: 38px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      display: grid; place-items: center; font-size: 18px; flex-shrink: 0;
+    }
+    .ai-status { font-size: 12px; color: var(--muted); }
+    .online-dot {
+      display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+      background: #4ade80; margin-right: 4px;
+      animation: pulse 2s infinite;
     }
 
-    .chat {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+    .chat-messages {
+      padding: 20px; display:flex; flex-direction:column; gap:14px;
+      min-height: 280px; max-height: 380px; overflow-y: auto;
     }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
 
     .bubble {
-      padding: 15px 17px;
-      border-radius: 16px;
-      max-width: 90%;
-      width: fit-content;
-      background: #1e293b;
-      animation: fadeIn 1s ease both;
+      padding: 13px 16px; border-radius: 16px; max-width: 85%;
+      font-size: 15px; line-height: 1.55; animation: slideIn .3s ease;
     }
-
+    .bubble.bot {
+      background: rgba(255,255,255,.07); border: 1px solid var(--border);
+      border-bottom-left-radius: 4px; align-self: flex-start;
+    }
     .bubble.user {
-      margin-left: auto;
-      background: linear-gradient(135deg, #2563eb, #2dd4bf);
+      background: linear-gradient(135deg, var(--blue), var(--teal2));
+      color: #fff; border-bottom-right-radius: 4px; align-self: flex-end;
+    }
+    .typing-dots { display:flex; gap:5px; align-items:center; padding: 5px 0; }
+    .typing-dots span {
+      width:8px; height:8px; border-radius:50%; background: var(--muted);
+      animation: dotBounce 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+
+    .chat-input-area {
+      padding: 14px 20px; border-top: 1px solid var(--border);
+      display: flex; gap: 10px; align-items: flex-end;
+    }
+    .chat-input {
+      flex: 1; background: rgba(255,255,255,.06);
+      border: 1px solid var(--border2); border-radius: 14px;
+      padding: 12px 16px; color: var(--text); font-size: 15px;
+      font-family: var(--font-body); resize: none; outline: none;
+      max-height: 120px; line-height: 1.5;
+      transition: border-color .2s;
+    }
+    .chat-input:focus { border-color: rgba(45,212,191,.5); }
+    .chat-input::placeholder { color: var(--muted); }
+
+    .chat-quick { padding: 0 20px 14px; display:flex; flex-wrap:wrap; gap:8px; }
+    .quick-btn {
+      padding: 7px 13px; border-radius: 999px; font-size: 13px;
+      background: rgba(45,212,191,.08); border: 1px solid rgba(45,212,191,.2);
+      color: #99f6e4; cursor: pointer; font-family: var(--font-body); transition: .2s;
+    }
+    .quick-btn:hover { background: rgba(45,212,191,.15); }
+
+    /* ── APPLICATION FORM ── */
+    .form-section { background: var(--bg2); }
+    .form-box {
+      max-width: 680px; margin: 0 auto;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius2); padding: 36px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.25);
+    }
+    .form-grid { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+    .form-group { display:flex; flex-direction:column; gap:7px; }
+    .form-group.full { grid-column: 1/3; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--muted2); letter-spacing: .3px; }
+    .form-input, .form-select, .form-textarea {
+      background: rgba(255,255,255,.05); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 13px 16px;
+      color: var(--text); font-size: 15px; font-family: var(--font-body);
+      outline: none; transition: border-color .2s, box-shadow .2s;
+      width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: rgba(45,212,191,.5);
+      box-shadow: 0 0 0 3px rgba(45,212,191,.1);
+    }
+    .form-select option { background: var(--bg3); }
+    .form-textarea { min-height: 90px; resize: vertical; }
+    .form-submit {
+      margin-top: 6px; width: 100%; padding: 15px;
+      font-size: 16px; font-weight: 700;
+    }
+    .form-status {
+      text-align: center; padding: 14px; border-radius: 12px;
+      font-size: 15px; margin-top: 14px; display: none;
+    }
+    .form-status.success { background: rgba(74,222,128,.1); color: #4ade80; border: 1px solid rgba(74,222,128,.2); }
+    .form-status.error   { background: rgba(239,68,68,.1);  color: #f87171; border: 1px solid rgba(239,68,68,.2); }
+
+    /* ── OPERATORS ── */
+    .online-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 999px;
+      background: rgba(74,222,128,.1); color: #4ade80;
+      border: 1px solid rgba(74,222,128,.2); font-weight: 600;
+      animation: pulse 2.5s infinite; margin-top: 14px;
     }
 
-    .online {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 14px;
-      padding: 10px 18px;
-      border-radius: 999px;
-      background: rgba(34,197,94,0.15);
-      color: #4ade80;
-      font-weight: 900;
-      border: 1px solid rgba(74,222,128,0.32);
-      animation: onlinePulse 2s infinite;
+    /* ── FAQ ── */
+    .faq-list { max-width: 780px; margin: 0 auto; display:grid; gap:12px; }
+    .faq-item {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius); overflow: hidden;
     }
-
-    .contact {
-      text-align: center;
-      background: #0f172a;
-      border-top: 1px solid rgba(255,255,255,0.08);
+    .faq-q {
+      padding: 18px 22px; font-weight: 600; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      transition: color .2s; user-select: none;
     }
+    .faq-q:hover { color: var(--teal); }
+    .faq-q .arrow { font-size: 20px; transition: transform .3s; }
+    .faq-item.open .faq-q .arrow { transform: rotate(45deg); }
+    .faq-a { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+    .faq-a-inner { padding: 0 22px 18px; color: var(--muted2); font-size: 15px; }
+    .faq-item.open .faq-a { max-height: 200px; }
 
-    .socials {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 13px;
-      margin-top: 24px;
+    /* ── CONTACT ── */
+    .contact-section {
+      background: linear-gradient(180deg, var(--bg2), var(--bg));
+      border-top: 1px solid var(--border);
     }
+    .socials { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-top: 24px; }
 
+    /* ── FOOTER ── */
     footer {
-      padding: 24px 0;
-      color: #64748b;
-      text-align: center;
-      background: #080e1a;
-      font-size: 14px;
+      padding: 24px 0; text-align: center;
+      background: rgba(0,0,0,.3); border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 13px;
     }
 
+    /* ── FLOAT TG ── */
     .float-tg {
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 100;
+      position: fixed; right: 18px; bottom: 18px; z-index: 200;
+      border-radius: 50px; box-shadow: 0 8px 28px rgba(37,99,235,.4);
     }
 
-    @media (max-width: 900px) {
-      .hero-grid,
-      .cards,
-      .steps,
-      .stats,
-      .admin-grid {
-        grid-template-columns: 1fr;
-      }
-
-      textarea {
-        grid-column: 1;
-      }
-
-      .nav {
-        align-items: flex-start;
-      }
-
-      .nav-right {
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 9px;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .hero {
-        padding-top: 50px;
-      }
+    /* ── ADMIN ── */
+    .admin-box {
+      max-width: 860px; margin: 0 auto;
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: var(--radius2); padding: 30px;
     }
-  </style></head><body>
-  <header>
-    <div class="container nav">
-      <a class="logo" href="#">
-        <span class="logo-mark">
-          <img src="https://i.postimg.cc/9MxHgJSg/IMG-20260506-155013-463.jpg" alt="Mir Power Logo" />
-        </span>
-        <span>Mir Power</span>
-      </a><div class="nav-right">
-    <div class="lang">
-      <button onclick="setLang('ru')">🇷🇺</button>
-      <button onclick="setLang('uz')">🇺🇿</button>
-      <button onclick="setLang('en')">🇬🇧</button>
-    </div>
+    .admin-grid { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    .admin-note { color: var(--muted); font-size: 13px; margin-top:12px; }
 
-    <nav class="nav-links">
-      <a href="#about">О нас</a>
-      <a href="#countries">Страны</a>
-      <a href="#jobs">Вакансии</a>
-      <a href="#admin">Админ</a>
-      <a href="#contacts">Контакты</a>
+    /* ── COUNTER WIDGET ── */
+    .counter-strip {
+      background: linear-gradient(90deg, rgba(45,212,191,.08), rgba(37,99,235,.08));
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+    }
+    .counter-inner {
+      display:flex; justify-content:center; flex-wrap:wrap; gap:40px;
+    }
+    .counter-item { text-align:center; }
+    .counter-num {
+      font-family: var(--font-head); font-size: 32px; font-weight: 900;
+      color: var(--teal); display: block;
+      animation: countUp .6s ease;
+    }
+    .counter-label { font-size: 13px; color: var(--muted); }
+
+    /* ── MEDIA ── */
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .grid3, .steps { grid-template-columns: 1fr 1fr; }
+      .grid4 { grid-template-columns: 1fr 1fr; }
+      .nav-center { display: none; }
+      .burger { display: flex; }
+      .mobile-menu { display: flex; }
+    }
+    @media (max-width: 640px) {
+      .grid3, .grid4, .steps, .hero-stats { grid-template-columns: 1fr; }
+      .admin-grid, .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+      .hero { padding: 60px 0 50px; }
+      h1 { letter-spacing: -0.5px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<header>
+  <div class="container nav">
+    <a class="logo" href="#">
+      <div class="logo-img">
+        <img src="https://i.postimg.cc/9MxHgJSg/IMG-20260506-155013-463.jpg" alt="Mir Power" />
+      </div>
+      <span>Mir Power</span>
+    </a>
+
+    <nav class="nav-center">
+      <a href="#about"    data-i18n="nav_about">О нас</a>
+      <a href="#jobs"     data-i18n="nav_jobs">Вакансии</a>
+      <a href="#apply"    data-i18n="nav_apply">Заявка</a>
+      <a href="#ai"       data-i18n="nav_ai">AI-чат</a>
+      <a href="#contacts" data-i18n="nav_contacts">Контакты</a>
     </nav>
+
+    <div class="nav-right">
+      <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLang('ru')">🇷🇺</button>
+        <button class="lang-btn"        onclick="setLang('uz')">🇺🇿</button>
+        <button class="lang-btn"        onclick="setLang('en')">🇬🇧</button>
+      </div>
+      <button class="burger" id="burgerBtn" aria-label="Меню" onclick="toggleMobile()">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#about"    onclick="closeMobile()" data-i18n="nav_about">О нас</a>
+    <a href="#jobs"     onclick="closeMobile()" data-i18n="nav_jobs">Вакансии</a>
+    <a href="#apply"    onclick="closeMobile()" data-i18n="nav_apply">Заявка</a>
+    <a href="#ai"       onclick="closeMobile()" data-i18n="nav_ai">AI-чат</a>
+    <a href="#operators" onclick="closeMobile()" data-i18n="nav_operators">Операторы</a>
+    <a href="#contacts" onclick="closeMobile()" data-i18n="nav_contacts">Контакты</a>
+    <div class="lang-row">
+      <button class="lang-btn" onclick="setLang('ru');closeMobile()">🇷🇺 Русский</button>
+      <button class="lang-btn" onclick="setLang('uz');closeMobile()">🇺🇿 O'zbek</button>
+      <button class="lang-btn" onclick="setLang('en');closeMobile()">🇬🇧 English</button>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════ STATS BAR ═══════════════════════ -->
+<div class="stats-bar">
+  <div class="container stats-bar-inner">
+    <span>👁 <b id="viewCount">—</b> <span data-i18n="stat_views">просмотров сегодня</span></span>
+    <span>📋 <b id="appCount">—</b> <span data-i18n="stat_apps">заявок получено</span></span>
+    <span>✅ <b>1500+</b> <span data-i18n="stat_vac">актуальных вакансий</span></span>
+    <span>🌍 <b>13</b> <span data-i18n="stat_countries">стран назначения</span></span>
   </div>
 </div>
 
-  </header>  <main>
-    <section class="hero">
-      <div class="container hero-grid">
-        <div>
-          <div class="badge">Xususiy Bandlik Agentligi</div>
-          <h1 data-i18n="heroTitle">Работа за границей через <span class="highlight">Mir Power</span></h1>
-          <p data-i18n="heroText">
-            Мы помогаем клиентам найти работу за рубежом. Сейчас у нас более 1500 актуальных вакансий по строительным и рабочим направлениям.
-          </p><div class="actions">
-        <a class="btn btn-primary" href="#operators" data-i18n="applyBtn">Оставить заявку</a>
-        <a class="btn btn-secondary" href="https://t.me/MirPower_Kitob" target="_blank">Telegram канал</a>
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div style="animation: fadeUp .7s ease both;">
+      <div class="badge">✈️ <span data-i18n="badge">Xususiy Bandlik Agentligi</span></div>
+      <h1 data-i18n="h_hero">Работа за границей через <span class="highlight">Mir Power</span></h1>
+      <p class="hero-desc" data-i18n="p_hero">
+        Мы помогаем найти работу за рубежом — более 1500 актуальных вакансий по строительным и рабочим направлениям в 13 странах.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#apply" data-i18n="btn_apply">✍️ Оставить заявку</a>
+        <a class="btn btn-secondary" href="https://t.me/mirpowerxba_bot" target="_blank" data-i18n="btn_channel">💬 Telegram канал</a>
       </div>
-
-      <div class="stats">
-        <div class="stat"><strong>1500+</strong><span>актуальных вакансий</span></div>
-        <div class="stat"><strong>13+</strong><span>направлений стран</span></div>
-        <div class="stat"><strong>24/7</strong><span>операторы онлайн</span></div>
+      <div class="hero-stats">
+        <div class="hero-stat"><strong>1500+</strong><span data-i18n="hs1">вакансий</span></div>
+        <div class="hero-stat"><strong>13+</strong><span data-i18n="hs2">стран</span></div>
+        <div class="hero-stat"><strong>24/7</strong><span data-i18n="hs3">онлайн</span></div>
       </div>
     </div>
 
-    <div class="hero-card" id="countries">
-      <div class="card-top">
-        <h2>Куда отправляем?</h2>
-        <span class="badge">Актуально</span>
-      </div>
-
-      <div class="country-list">
-        <div class="country"><b>🇬🇪 Грузия</b><span>работа</span></div>
-        <div class="country"><b>🇲🇩 Молдова</b><span>работа</span></div>
-        <div class="country"><b>🇧🇾 Беларусь</b><span>работа</span></div>
-        <div class="country"><b>🇷🇺 Россия</b><span>работа</span></div>
-        <div class="country"><b>🇧🇪 Бельгия</b><span>работа</span></div>
-        <div class="country"><b>🇧🇬 Болгария</b><span>работа</span></div>
-        <div class="country"><b>🇷🇸 Сербия</b><span>работа</span></div>
-        <div class="country"><b>🇱🇻 Латвия</b><span>работа</span></div>
-        <div class="country"><b>🇱🇹 Литва</b><span>работа</span></div>
-        <div class="country"><b>🇩🇪 Германия</b><span>работа</span></div>
-        <div class="country"><b>🇭🇷 Хорватия</b><span>работа</span></div>
-        <div class="country"><b>🇵🇱 Польша</b><span>работа</span></div>
-        <div class="country"><b>🇯🇵 Япония</b><span>работа</span></div>
+    <div id="countries">
+      <div class="countries-card">
+        <div class="card-head">
+          <h3 data-i18n="countries_title">Куда отправляем?</h3>
+          <div class="badge" style="font-size:12px" data-i18n="badge_live">Актуально</div>
+        </div>
+        <div class="country-list">
+          <div class="country-item"><div class="flag-name">🇬🇪 <span data-i18n="c_ge">Грузия</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇲🇩 <span data-i18n="c_md">Молдова</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇧🇾 <span data-i18n="c_by">Беларусь</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇷🇺 <span data-i18n="c_ru">Россия</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇧🇪 <span data-i18n="c_be">Бельгия</span></div><span class="salary">от 2000€</span></div>
+          <div class="country-item"><div class="flag-name">🇧🇬 <span data-i18n="c_bg">Болгария</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇷🇸 <span data-i18n="c_rs">Сербия</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇱🇻 <span data-i18n="c_lv">Латвия</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇱🇹 <span data-i18n="c_lt">Литва</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇩🇪 <span data-i18n="c_de">Германия</span></div><span class="salary">от 2200€</span></div>
+          <div class="country-item"><div class="flag-name">🇭🇷 <span data-i18n="c_hr">Хорватия</span></div><span class="salary" data-i18n="c_work">Работа</span></div>
+          <div class="country-item"><div class="flag-name">🇵🇱 <span data-i18n="c_pl">Польша</span></div><span class="salary">от 1600€</span></div>
+          <div class="country-item"><div class="flag-name">🇯🇵 <span data-i18n="c_jp">Япония</span></div><span class="salary" data-i18n="c_official">Официально</span></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ═══════════════════════ COUNTER ═══════════════════════ -->
+<div class="counter-strip">
+  <div class="container counter-inner">
+    <div class="counter-item">
+      <span class="counter-num" id="c1">0</span>
+      <div class="counter-label" data-i18n="cnt1">Успешных выездов</div>
+    </div>
+    <div class="counter-item">
+      <span class="counter-num" id="c2">0</span>
+      <div class="counter-label" data-i18n="cnt2">Заявок этот месяц</div>
+    </div>
+    <div class="counter-item">
+      <span class="counter-num" id="c3">0</span>
+      <div class="counter-label" data-i18n="cnt3">Стран-партнёров</div>
+    </div>
+    <div class="counter-item">
+      <span class="counter-num" id="c4">0</span>
+      <div class="counter-label" data-i18n="cnt4">Лет на рынке</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ ABOUT ═══════════════════════ -->
 <section id="about">
   <div class="container">
-    <div class="section-title">
-      <h2>Что делает Mir Power?</h2>
-      <p>Мы помогаем подобрать вакансию, объясняем условия и сопровождаем клиента по процессу оформления.</p>
+    <div class="sec-title">
+      <h2 data-i18n="about_h">Что делает Mir Power?</h2>
+      <p data-i18n="about_p">Подбираем вакансию, объясняем условия и сопровождаем клиента на каждом этапе.</p>
     </div>
-
-    <div class="cards">
-      <div class="info-card">
-        <div class="icon">🔎</div>
-        <h3>Подбор вакансии</h3>
-        <p>Подбираем страну, работу, зарплату и условия под клиента.</p>
+    <div class="grid3">
+      <div class="card">
+        <div class="card-icon">🔎</div>
+        <h3 data-i18n="ab1_h">Подбор вакансии</h3>
+        <p data-i18n="ab1_p">Подбираем страну, работу, зарплату и условия под ваш профиль.</p>
       </div>
-
-      <div class="info-card">
-        <div class="icon">📋</div>
-        <h3>Консультация</h3>
-        <p>Объясняем документы, требования, жильё, график и порядок выезда.</p>
+      <div class="card">
+        <div class="card-icon">📋</div>
+        <h3 data-i18n="ab2_h">Консультация</h3>
+        <p data-i18n="ab2_p">Объясняем документы, требования, жильё, график и порядок выезда.</p>
       </div>
-
-      <div class="info-card">
-        <div class="icon">🤝</div>
-        <h3>Сопровождение</h3>
-        <p>Клиент может связаться с операторами через Telegram или по телефону.</p>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <h3 data-i18n="ab3_h">Сопровождение</h3>
+        <p data-i18n="ab3_p">Клиент может связаться с операторами через Telegram или по телефону.</p>
       </div>
     </div>
   </div>
 </section>
 
-<section id="jobs">
+<!-- ═══════════════════════ JOBS ═══════════════════════ -->
+<section id="jobs" style="background: var(--bg2);">
   <div class="container">
-    <div class="section-title">
-      <h2>Вакансии по странам</h2>
-      <p>Выберите страну и посмотрите доступные направления работ.</p>
+    <div class="sec-title">
+      <h2 data-i18n="jobs_h">Вакансии по странам</h2>
+      <p data-i18n="jobs_p">Выберите страну и посмотрите доступные направления.</p>
     </div>
 
     <div class="filter-bar">
-      <button class="btn btn-secondary" onclick="filterJobs('all')">Все</button>
-      <button class="btn btn-secondary" onclick="filterJobs('germany')">🇩🇪 Германия</button>
-      <button class="btn btn-secondary" onclick="filterJobs('poland')">🇵🇱 Польша</button>
-      <button class="btn btn-secondary" onclick="filterJobs('japan')">🇯🇵 Япония</button>
-      <button class="btn btn-secondary" onclick="filterJobs('russia')">🇷🇺 Россия</button>
-      <button class="btn btn-secondary" onclick="filterJobs('belarus')">🇧🇾 Беларусь</button>
-      <button class="btn btn-secondary" onclick="filterJobs('serbia')">🇷🇸 Сербия</button>
-      <button class="btn btn-secondary" onclick="filterJobs('other')">Другие</button>
+      <button class="filter-btn active" onclick="filterJobs('all', this)" data-i18n="f_all">Все</button>
+      <button class="filter-btn" onclick="filterJobs('germany', this)">🇩🇪 <span data-i18n="c_de">Германия</span></button>
+      <button class="filter-btn" onclick="filterJobs('poland', this)">🇵🇱 <span data-i18n="c_pl">Польша</span></button>
+      <button class="filter-btn" onclick="filterJobs('japan', this)">🇯🇵 <span data-i18n="c_jp">Япония</span></button>
+      <button class="filter-btn" onclick="filterJobs('russia', this)">🇷🇺 <span data-i18n="c_ru">Россия</span></button>
+      <button class="filter-btn" onclick="filterJobs('belarus', this)">🇧🇾 <span data-i18n="c_by">Беларусь</span></button>
+      <button class="filter-btn" onclick="filterJobs('serbia', this)">🇷🇸 <span data-i18n="c_rs">Сербия</span></button>
+      <button class="filter-btn" onclick="filterJobs('other', this)">🌍 <span data-i18n="f_other">Другие</span></button>
     </div>
 
-    <div class="cards" id="jobsList">
-      <div class="info-card job-card" data-country="germany">
-        <div class="icon">🇩🇪</div>
-        <h3>Германия</h3>
+    <div class="grid3" id="jobsList">
+      <div class="card job-card" data-country="germany">
+        <div class="card-icon">🇩🇪</div>
+        <h3 data-i18n="c_de">Германия</h3>
         <div class="job-meta">
-          <div><b>Работы:</b> строитель, отделочник, монтажник, бетонщик</div>
-          <div><b>Зарплата:</b> от 2200€</div>
-          <div><b>Жильё:</b> предоставляется</div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_de_work">строитель, отделочник, монтажник, бетонщик</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_sal">Зарплата:</b> от 2200€</div>
+          <div class="job-meta-item"><b data-i18n="jm_house">Жильё:</b> <span data-i18n="jm_provided">предоставляется</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
-
-      <div class="info-card job-card" data-country="poland">
-        <div class="icon">🇵🇱</div>
-        <h3>Польша</h3>
+      <div class="card job-card" data-country="poland">
+        <div class="card-icon">🇵🇱</div>
+        <h3 data-i18n="c_pl">Польша</h3>
         <div class="job-meta">
-          <div><b>Работы:</b> разнорабочий, плиточник, фасад, гипсокартон</div>
-          <div><b>Зарплата:</b> от 1600€</div>
-          <div><b>Жильё:</b> есть варианты с жильём</div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_pl_work">разнорабочий, плиточник, фасад, гипсокартон</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_sal">Зарплата:</b> от 1600€</div>
+          <div class="job-meta-item"><b data-i18n="jm_house">Жильё:</b> <span data-i18n="jm_options">есть варианты</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
-
-      <div class="info-card job-card" data-country="japan">
-        <div class="icon">🇯🇵</div>
-        <h3>Япония</h3>
+      <div class="card job-card" data-country="japan">
+        <div class="card-icon">🇯🇵</div>
+        <h3 data-i18n="c_jp">Япония</h3>
         <div class="job-meta">
-          <div><b>Работы:</b> стройка, заводские и технические работы</div>
-          <div><b>Зарплата:</b> уточняется</div>
-          <div><b>Условия:</b> официальная работа</div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_jp_work">стройка, заводские и технические работы</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_sal">Зарплата:</b> <span data-i18n="jm_discuss">уточняется</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_cond">Условия:</b> <span data-i18n="jm_official">официальная работа</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
-
-      <div class="info-card job-card" data-country="russia">
-        <div class="icon">🇷🇺</div>
-        <h3>Россия</h3>
+      <div class="card job-card" data-country="russia">
+        <div class="card-icon">🇷🇺</div>
+        <h3 data-i18n="c_ru">Россия</h3>
         <div class="job-meta">
-          <div><b>Работы:</b> стройка, ремонт, кладка, бетон, разнорабочий</div>
-          <div><b>Зарплата:</b> по договорённости</div>
-          <div><b>Жильё:</b> зависит от вакансии</div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_ru_work">стройка, ремонт, кладка, бетон</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_sal">Зарплата:</b> <span data-i18n="jm_agree">по договорённости</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_house">Жильё:</b> <span data-i18n="jm_depends">зависит от вакансии</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
-
-      <div class="info-card job-card" data-country="belarus">
-        <div class="icon">🇧🇾</div>
-        <h3>Беларусь</h3>
+      <div class="card job-card" data-country="belarus">
+        <div class="card-icon">🇧🇾</div>
+        <h3 data-i18n="c_by">Беларусь</h3>
         <div class="job-meta">
-          <div><b>Работы:</b> монтажник, мастер, помощник мастера</div>
-          <div><b>Зарплата:</b> по вакансии</div>
-          <div><b>Жильё:</b> уточняется</div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_by_work">монтажник, мастер, помощник мастера</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_sal">Зарплата:</b> <span data-i18n="jm_byvac">по вакансии</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_house">Жильё:</b> <span data-i18n="jm_discuss">уточняется</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
-
-      <div class="info-card job-card" data-country="serbia">
-        <div class="icon">🇷🇸</div>
-        <h3>Сербия</h3>
+      <div class="card job-card" data-country="serbia">
+        <div class="card-icon">🇷🇸</div>
+        <h3 data-i18n="c_rs">Сербия</h3>
         <div class="job-meta">
-          <div><b>Работы:</b> строитель, помощник, ремонт, отделка</div>
-          <div><b>Зарплата:</b> уточняется</div>
-          <div><b>Жильё:</b> зависит от вакансии</div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_rs_work">строитель, помощник, отделка</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_sal">Зарплата:</b> <span data-i18n="jm_discuss">уточняется</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_house">Жильё:</b> <span data-i18n="jm_depends">зависит от вакансии</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
-
-      <div class="info-card job-card" data-country="other">
-        <div class="icon">🌍</div>
-        <h3>Другие страны</h3>
+      <div class="card job-card" data-country="other">
+        <div class="card-icon">🌍</div>
+        <h3 data-i18n="j_other_h">Другие страны</h3>
         <div class="job-meta">
-          <div><b>Страны:</b> Грузия, Молдова, Бельгия, Болгария, Латвия, Литва, Хорватия</div>
-          <div><b>Работы:</b> стройка и рабочие направления</div>
-          <div><b>Условия:</b> уточняются у оператора</div>
+          <div class="job-meta-item"><b data-i18n="jm_countries">Страны:</b> <span data-i18n="j_other_countries">Грузия, Молдова, Бельгия, Болгария, Латвия, Литва, Хорватия</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_work">Работы:</b> <span data-i18n="j_other_work">стройка и рабочие направления</span></div>
+          <div class="job-meta-item"><b data-i18n="jm_cond">Условия:</b> <span data-i18n="j_other_cond">уточняются у оператора</span></div>
         </div>
-        <br />
-        <a class="btn btn-primary" href="#operators">Оставить заявку</a>
+        <a class="btn btn-primary btn-sm" href="#apply" data-i18n="btn_apply_short">Оставить заявку</a>
       </div>
     </div>
   </div>
 </section>
 
-<section id="admin">
-  <div class="container">
-    <div class="section-title">
-      <h2>Админ панель вакансий</h2>
-      <p>Добавляйте новые вакансии прямо на сайте. Они сохраняются в браузере телефона через localStorage.</p>
-    </div>
-
-    <div class="admin-box">
-      <div class="admin-grid">
-        <input id="adminCountry" placeholder="Страна: Германия" />
-        <input id="adminFlag" placeholder="Флаг: 🇩🇪" />
-
-        <select id="adminCategory">
-          <option value="other">Категория: Другие</option>
-          <option value="germany">Германия</option>
-          <option value="poland">Польша</option>
-          <option value="japan">Япония</option>
-          <option value="russia">Россия</option>
-          <option value="belarus">Беларусь</option>
-          <option value="serbia">Сербия</option>
-        </select>
-
-        <input id="adminSalary" placeholder="Зарплата: от 2200€" />
-        <textarea id="adminWork" placeholder="Какие работы: строитель, бетонщик, отделочник, разнорабочий..."></textarea>
-        <input id="adminHousing" placeholder="Жильё: предоставляется / уточняется" />
-      </div>
-
-      <div class="admin-actions">
-        <button class="btn btn-primary" onclick="addJob()">➕ Добавить вакансию</button>
-        <button class="btn btn-secondary" onclick="clearAddedJobs()">🗑 Очистить добавленные</button>
-      </div>
-
-      <p class="admin-note">
-        Важно: это простая админ-панель без сервера. Вакансии сохраняются только на том телефоне/браузере, где добавлены. Для общей админки нужен сервер или база данных.
-      </p>
-    </div>
-  </div>
-</section>
-
+<!-- ═══════════════════════ HOW IT WORKS ═══════════════════════ -->
 <section>
   <div class="container">
-    <div class="section-title">
-      <h2>🤖 AI Подбор вакансии</h2>
-      <p>Помощник помогает клиенту быстро выбрать страну и направление работы.</p>
+    <div class="sec-title">
+      <h2 data-i18n="steps_h">Как всё проходит?</h2>
+      <p data-i18n="steps_p">Простой путь от заявки до выезда.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3 data-i18n="s1_h">Заявка</h3>
+        <p data-i18n="s1_p">Оставьте заявку на сайте или напишите оператору в Telegram.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3 data-i18n="s2_h">Консультация</h3>
+        <p data-i18n="s2_p">Уточняем опыт, возраст, желаемую страну и документы.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3 data-i18n="s3_h">Подбор</h3>
+        <p data-i18n="s3_p">Подбираем подходящую вакансию под ваш профиль.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3 data-i18n="s4_h">Оформление</h3>
+        <p data-i18n="s4_p">Объясняем следующие шаги и помогаем подготовиться к выезду.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ AI CHAT ═══════════════════════ -->
+<section class="ai-section" id="ai">
+  <div class="container">
+    <div class="sec-title">
+      <h2 data-i18n="ai_h">🤖 AI-помощник</h2>
+      <p data-i18n="ai_p">Задайте вопрос о вакансиях, странах и условиях — отвечает умный ассистент.</p>
     </div>
 
     <div class="ai-box">
-      <div class="chat">
-        <div class="bubble">👋 Здравствуйте! Какая страна вас интересует?</div>
-        <div class="bubble user">🇩🇪 Германия</div>
-        <div class="bubble">Отлично 👍 Есть вакансии от 2200€ с жильём. Хотите связаться с оператором?</div>
+      <div class="ai-header">
+        <div class="ai-avatar">🤖</div>
+        <div>
+          <div style="font-weight:700;font-size:15px" data-i18n="ai_name">Mir Power AI</div>
+          <div class="ai-status"><span class="online-dot"></span><span data-i18n="ai_online">Онлайн</span></div>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="bubble bot" data-i18n="ai_welcome">👋 Здравствуйте! Я помощник Mir Power. Спросите меня о вакансиях, странах, зарплатах или условиях работы.</div>
+      </div>
+
+      <div class="chat-quick" id="quickBtns">
+        <button class="quick-btn" onclick="sendQuick(this.textContent)" data-i18n="q1">🇩🇪 Германия</button>
+        <button class="quick-btn" onclick="sendQuick(this.textContent)" data-i18n="q2">🇵🇱 Польша</button>
+        <button class="quick-btn" onclick="sendQuick(this.textContent)" data-i18n="q3">💰 Зарплаты</button>
+        <button class="quick-btn" onclick="sendQuick(this.textContent)" data-i18n="q4">📄 Документы</button>
+        <button class="quick-btn" onclick="sendQuick(this.textContent)" data-i18n="q5">🏠 Жильё</button>
+      </div>
+
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chatInput" rows="1" placeholder="Напишите вопрос..." data-i18n-placeholder="chat_placeholder"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage()}"
+          oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+        <button class="btn btn-primary btn-sm" onclick="sendMessage()" id="sendBtn">➤</button>
       </div>
     </div>
   </div>
 </section>
 
-<section>
+<!-- ═══════════════════════ APPLICATION FORM ═══════════════════════ -->
+<section class="form-section" id="apply">
   <div class="container">
-    <div class="section-title">
-      <h2>Как всё проходит?</h2>
-      <p>Простой путь клиента: заявка, консультация, подбор вакансии и оформление.</p>
+    <div class="sec-title">
+      <h2 data-i18n="form_h">✍️ Оставить заявку</h2>
+      <p data-i18n="form_p">Заполните форму — оператор свяжется с вами в течение 30 минут.</p>
     </div>
 
-    <div class="steps">
-      <div class="step">
-        <h3>Заявка</h3>
-        <p>Клиент пишет оператору или открывает Mini App.</p>
+    <div class="form-box">
+      <div class="form-grid">
+        <div class="form-group">
+          <label data-i18n="f_name">Имя</label>
+          <input class="form-input" id="fName" type="text" data-i18n-placeholder="fp_name" placeholder="Ваше имя" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_phone">Телефон</label>
+          <input class="form-input" id="fPhone" type="tel" placeholder="+998 XX XXX XX XX" />
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_country">Страна интереса</label>
+          <select class="form-select" id="fCountry">
+            <option value="" data-i18n="f_choose">Выберите страну</option>
+            <option value="Германия" data-i18n="c_de">Германия</option>
+            <option value="Польша"   data-i18n="c_pl">Польша</option>
+            <option value="Япония"   data-i18n="c_jp">Япония</option>
+            <option value="Россия"   data-i18n="c_ru">Россия</option>
+            <option value="Беларусь" data-i18n="c_by">Беларусь</option>
+            <option value="Сербия"   data-i18n="c_rs">Сербия</option>
+            <option value="Германия" data-i18n="c_be">Бельгия</option>
+            <option value="Болгария" data-i18n="c_bg">Болгария</option>
+            <option value="Латвия"   data-i18n="c_lv">Латвия</option>
+            <option value="Литва"    data-i18n="c_lt">Литва</option>
+            <option value="Хорватия" data-i18n="c_hr">Хорватия</option>
+            <option value="Грузия"   data-i18n="c_ge">Грузия</option>
+            <option value="Молдова"  data-i18n="c_md">Молдова</option>
+            <option value="Япония"   data-i18n="c_jp">Япония</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_exp">Опыт работы</label>
+          <select class="form-select" id="fExp">
+            <option value="" data-i18n="f_choose_exp">Выберите опыт</option>
+            <option value="Нет опыта"   data-i18n="exp_no">Нет опыта</option>
+            <option value="До 1 года"   data-i18n="exp_1">До 1 года</option>
+            <option value="1-3 года"    data-i18n="exp_3">1–3 года</option>
+            <option value="3+ лет"      data-i18n="exp_3p">3+ лет</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label data-i18n="f_note">Комментарий (необязательно)</label>
+          <textarea class="form-textarea" id="fNote" data-i18n-placeholder="fp_note" placeholder="Специальность, пожелания..."></textarea>
+        </div>
       </div>
-
-      <div class="step">
-        <h3>Консультация</h3>
-        <p>Уточняем опыт, возраст, страну и документы.</p>
-      </div>
-
-      <div class="step">
-        <h3>Подбор</h3>
-        <p>Подбираем подходящую работу.</p>
-      </div>
-
-      <div class="step">
-        <h3>Оформление</h3>
-        <p>Объясняем следующие шаги.</p>
-      </div>
+      <button class="btn btn-primary form-submit" onclick="submitForm()" id="formBtn" data-i18n="btn_send_form">
+        📩 Отправить заявку
+      </button>
+      <div class="form-status" id="formStatus"></div>
     </div>
   </div>
 </section>
 
+<!-- ═══════════════════════ OPERATORS ═══════════════════════ -->
 <section id="operators">
   <div class="container">
-    <div class="section-title">
-      <h2>Операторы Mir Power</h2>
-      <div class="online">🟢 Операторы онлайн 24/7</div>
-      <p>Выберите удобный способ связи: Telegram или звонок.</p>
+    <div class="sec-title">
+      <h2 data-i18n="ops_h">Операторы Mir Power</h2>
+      <div class="online-badge">🟢 <span data-i18n="ops_online">Операторы онлайн 24/7</span></div>
+      <p style="margin-top:14px" data-i18n="ops_p">Выберите удобный способ связи.</p>
     </div>
-
-    <div class="cards">
-      <div class="info-card">
-        <div class="icon">📞</div>
-        <h3>Оператор 1</h3>
-        <p>☎️ +998876524222</p>
-        <br />
-        <a class="btn btn-primary" href="tel:+998876524222">Позвонить</a>
-        <br /><br />
-        <a class="btn btn-secondary" href="https://t.me/Mir_Power_1" target="_blank">Telegram</a>
+    <div class="grid3">
+      <div class="card" style="text-align:center;">
+        <div class="card-icon" style="margin:0 auto 16px">📞</div>
+        <h3 data-i18n="op1">Оператор 1</h3>
+        <p style="margin:10px 0 18px">☎️ +998876524222</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+          <a class="btn btn-primary btn-sm" href="tel:+998876524222" data-i18n="btn_call">Позвонить</a>
+          <a class="btn btn-secondary btn-sm" href="https://t.me/Mir_Power_1" target="_blank">Telegram</a>
+        </div>
       </div>
-
-      <div class="info-card">
-        <div class="icon">📞</div>
-        <h3>Оператор 2</h3>
-        <p>☎️ +998886204222</p>
-        <br />
-        <a class="btn btn-primary" href="tel:+998886204222">Позвонить</a>
-        <br /><br />
-        <a class="btn btn-secondary" href="https://t.me/Mir_Power_2" target="_blank">Telegram</a>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon" style="margin:0 auto 16px">📞</div>
+        <h3 data-i18n="op2">Оператор 2</h3>
+        <p style="margin:10px 0 18px">☎️ +998886204222</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+          <a class="btn btn-primary btn-sm" href="tel:+998886204222" data-i18n="btn_call">Позвонить</a>
+          <a class="btn btn-secondary btn-sm" href="https://t.me/Mir_Power_2" target="_blank">Telegram</a>
+        </div>
       </div>
-
-      <div class="info-card">
-        <div class="icon">📞</div>
-        <h3>Оператор 3</h3>
-        <p>☎️ +998885954222</p>
-        <br />
-        <a class="btn btn-primary" href="tel:+998885954222">Позвонить</a>
-        <br /><br />
-        <a class="btn btn-secondary" href="https://t.me/MirPower_Kitob" target="_blank">Telegram канал</a>
+      <div class="card" style="text-align:center;">
+        <div class="card-icon" style="margin:0 auto 16px">📞</div>
+        <h3 data-i18n="op3">Оператор 3</h3>
+        <p style="margin:10px 0 18px">☎️ +998885954222</p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+          <a class="btn btn-primary btn-sm" href="tel:+998885954222" data-i18n="btn_call">Позвонить</a>
+          <a class="btn btn-secondary btn-sm" href="https://t.me/mirpowerxba_bot" target="_blank">Telegram</a>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<section>
+<!-- ═══════════════════════ FAQ ═══════════════════════ -->
+<section style="background: var(--bg2);">
   <div class="container">
-    <div class="section-title">
-      <h2>FAQ — Частые вопросы</h2>
-      <p>Ответы на популярные вопросы клиентов.</p>
+    <div class="sec-title">
+      <h2 data-i18n="faq_h">FAQ — Частые вопросы</h2>
     </div>
-
-    <div class="cards">
-      <div class="info-card">
-        <h3>Нужен ли загранпаспорт?</h3>
-        <p>Да, для большинства стран нужен действующий загранпаспорт.</p>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq1_q">Нужен ли загранпаспорт?</span><span class="arrow">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq1_a">Да, для большинства стран нужен действующий загранпаспорт. Уточните у оператора для конкретной страны.</div></div>
       </div>
-
-      <div class="info-card">
-        <h3>Есть ли жильё?</h3>
-        <p>Во многих вакансиях жильё предоставляется работодателем.</p>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq2_q">Есть ли жильё?</span><span class="arrow">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq2_a">Во многих вакансиях жильё предоставляется работодателем. Уточняйте по каждой конкретной вакансии.</div></div>
       </div>
-
-      <div class="info-card">
-        <h3>Нужен ли опыт?</h3>
-        <p>Есть вакансии для опытных работников и для новичков.</p>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq3_q">Нужен ли опыт?</span><span class="arrow">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq3_a">Есть вакансии как для опытных работников, так и для новичков. Мы подберём подходящую позицию.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq4_q">Сколько стоят услуги агентства?</span><span class="arrow">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq4_a">Условия и стоимость услуг уточняются у оператора индивидуально, в зависимости от страны и вакансии.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)"><span data-i18n="faq5_q">Как быстро можно уехать?</span><span class="arrow">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner" data-i18n="faq5_a">Сроки зависят от страны и готовности документов. Свяжитесь с оператором для уточнения сроков.</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="container">
-    <div class="section-title">
-      <h2>Маршрут до офиса</h2>
-      <p>Откройте карту и постройте маршрут до офиса Mir Power.</p>
-    </div>
 
-    <div style="text-align:center;">
-      <a class="btn btn-primary" href="https://maps.app.goo.gl/w1VfGYVtkeX88Cib9" target="_blank">📍 Открыть маршрут</a>
+<!-- ═══════════════════════ MAP ═══════════════════════ -->
+<section style="background:var(--bg2);">
+  <div class="container" style="text-align:center">
+    <div class="sec-title">
+      <h2 data-i18n="map_h">Маршрут до офиса</h2>
+      <p data-i18n="map_p">Откройте карту и постройте маршрут.</p>
     </div>
+    <a class="btn btn-primary" href="https://maps.app.goo.gl/w1VfGYVtkeX88Cib9" target="_blank">📍 <span data-i18n="btn_map">Открыть маршрут</span></a>
   </div>
 </section>
 
-<section class="contact" id="contacts">
-  <div class="container">
-    <div class="section-title">
-      <h2>Связаться с Mir Power</h2>
-      <p>Получите информацию о доступных вакансиях.</p>
+<!-- ═══════════════════════ CONTACTS ═══════════════════════ -->
+<section class="contact-section" id="contacts">
+  <div class="container" style="text-align:center">
+    <div class="sec-title">
+      <h2 data-i18n="contacts_h">Связаться с Mir Power</h2>
+      <p data-i18n="contacts_p">Получите информацию о доступных вакансиях.</p>
     </div>
-
-    <div style="margin-top:20px; color:#cbd5e1; font-size:18px; line-height:1.9;">
+    <div style="color:var(--muted2);font-size:17px;line-height:2.1">
       <p>☎️ +998876524222</p>
       <p>☎️ +998886204222</p>
       <p>☎️ +998885954222</p>
-      <p>📍 Manzil: Shahrisabz Koica</p>
+      <p>📍 Shahrisabz Koica</p>
     </div>
-
     <div class="socials">
-      <a class="btn btn-primary" href="https://t.me/mirpowerxba_bot" target="_blank">Telegram бот</a>
-      <a class="btn btn-secondary" href="https://t.me/MirPower_Kitob" target="_blank">Telegram канал</a>
-      <a class="btn btn-secondary" href="https://www.instagram.com/mirpowerxba?igsh=MThqeWZ6a3p6MGtxcg==" target="_blank">Instagram</a>
+      <a class="btn btn-primary"   href="https://t.me/mirpowerxba_bot" target="_blank" data-i18n="btn_tgbot">Telegram бот</a>
+      <a class="btn btn-secondary" href="https://t.me/MirPower_Kitob" target="_blank" data-i18n="btn_tgchan">Telegram канал</a>
+      <a class="btn btn-secondary" href="https://www.instagram.com/mirpowerxba" target="_blank">Instagram</a>
     </div>
   </div>
 </section>
 
-  </main>  <footer>
-    <div class="container">
-      © 2026 Mir Power — Xususiy Bandlik Agentligi. Работа за границей по рабочим направлениям.
-    </div>
-  </footer><a class="btn btn-primary float-tg" href="https://t.me/mirpowerxba_bot" target="_blank">💬 Telegram</a>
+<footer>
+  <div class="container">
+    © 2026 Mir Power — Xususiy Bandlik Agentligi
+  </div>
+</footer>
 
-  <script>
-    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
-    if (tg) {
-      tg.ready();
-      tg.expand();
-    }
+<a class="btn btn-primary float-tg" href="https://t.me/mirpowerxba_bot" target="_blank">💬 Telegram</a>
 
-    const translations = {
-      ru: {
-        heroTitle: 'Работа за границей через <span class="highlight">Mir Power</span>',
-        heroText: 'Мы помогаем клиентам найти работу за рубежом. Сейчас у нас более 1500 актуальных вакансий по строительным и рабочим направлениям.',
-        applyBtn: 'Оставить заявку'
-      },
-      uz: {
-        heroTitle: '<span class="highlight">Mir Power</span> orqali chet elda ish',
-        heroText: 'Biz mijozlarga chet elda ish topishga yordam beramiz. Hozirda 1500 dan ortiq dolzarb vakansiyalar mavjud.',
-        applyBtn: 'Ariza qoldirish'
-      },
-      en: {
-        heroTitle: 'Work abroad with <span class="highlight">Mir Power</span>',
-        heroText: 'We help clients find jobs abroad. We currently have 1500+ active vacancies in construction and work-related fields.',
-        applyBtn: 'Apply now'
-      }
-    };
+<!-- ═══════════════════════ SCRIPTS ═══════════════════════ -->
+<script>
+/* ──────────── TELEGRAM INIT ──────────── */
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
 
-    function setLang(lang) {
-      document.querySelectorAll('[data-i18n]').forEach((el) => {
-        const key = el.dataset.i18n;
-        if (translations[lang] && translations[lang][key]) {
-          el.innerHTML = translations[lang][key];
-        }
+/* ──────────── TRANSLATIONS ──────────── */
+const T = {
+  ru: {
+    nav_about:"О нас", nav_jobs:"Вакансии", nav_apply:"Заявка", nav_ai:"AI-чат",
+    nav_contacts:"Контакты", nav_operators:"Операторы",
+    stat_views:"просмотров сегодня", stat_apps:"заявок получено",
+    stat_vac:"актуальных вакансий", stat_countries:"стран",
+    badge:"Xususiy Bandlik Agentligi", badge_live:"Актуально",
+    h_hero:'Работа за границей через <span class="highlight">Mir Power</span>',
+    p_hero:"Мы помогаем найти работу за рубежом — более 1500 актуальных вакансий в 13 странах.",
+    btn_apply:"✍️ Оставить заявку", btn_channel:"💬 Telegram канал",
+    hs1:"вакансий", hs2:"стран", hs3:"онлайн",
+    countries_title:"Куда отправляем?",
+    c_work:"Работа", c_official:"Официально",
+    c_ge:"Грузия", c_md:"Молдова", c_by:"Беларусь", c_ru:"Россия",
+    c_be:"Бельгия", c_bg:"Болгария", c_rs:"Сербия", c_lv:"Латвия",
+    c_lt:"Литва", c_de:"Германия", c_hr:"Хорватия", c_pl:"Польша", c_jp:"Япония",
+    cnt1:"Успешных выездов", cnt2:"Заявок этот месяц", cnt3:"Стран-партнёров", cnt4:"Лет на рынке",
+    about_h:"Что делает Mir Power?", about_p:"Подбираем вакансию и сопровождаем на каждом этапе.",
+    ab1_h:"Подбор вакансии", ab1_p:"Подбираем страну, работу, зарплату и условия под ваш профиль.",
+    ab2_h:"Консультация", ab2_p:"Объясняем документы, требования, жильё и порядок выезда.",
+    ab3_h:"Сопровождение", ab3_p:"Связь с операторами через Telegram или по телефону.",
+    jobs_h:"Вакансии по странам", jobs_p:"Выберите страну и посмотрите доступные направления.",
+    f_all:"Все", f_other:"Другие",
+    jm_work:"Работы:", jm_sal:"Зарплата:", jm_house:"Жильё:", jm_cond:"Условия:", jm_countries:"Страны:",
+    jm_provided:"предоставляется", jm_options:"есть варианты", jm_discuss:"уточняется",
+    jm_agree:"по договорённости", jm_depends:"зависит от вакансии",
+    jm_byvac:"по вакансии", jm_official:"официальная работа",
+    j_de_work:"строитель, отделочник, монтажник, бетонщик",
+    j_pl_work:"разнорабочий, плиточник, фасад, гипсокартон",
+    j_jp_work:"стройка, заводские и технические работы",
+    j_ru_work:"стройка, ремонт, кладка, бетон",
+    j_by_work:"монтажник, мастер, помощник мастера",
+    j_rs_work:"строитель, помощник, отделка",
+    j_other_h:"Другие страны", j_other_work:"стройка и рабочие направления",
+    j_other_countries:"Грузия, Молдова, Бельгия, Болгария, Латвия, Литва, Хорватия",
+    j_other_cond:"уточняются у оператора",
+    btn_apply_short:"Оставить заявку",
+    steps_h:"Как всё проходит?", steps_p:"Простой путь от заявки до выезда.",
+    s1_h:"Заявка", s1_p:"Оставьте заявку на сайте или напишите оператору.",
+    s2_h:"Консультация", s2_p:"Уточняем опыт, желаемую страну и документы.",
+    s3_h:"Подбор", s3_p:"Подбираем подходящую вакансию под ваш профиль.",
+    s4_h:"Оформление", s4_p:"Объясняем следующие шаги и помогаем подготовиться.",
+    ai_h:"🤖 AI-помощник", ai_p:"Задайте вопрос о вакансиях, странах и условиях.",
+    ai_name:"Mir Power AI", ai_online:"Онлайн",
+    ai_welcome:"👋 Здравствуйте! Я помощник Mir Power. Спросите меня о вакансиях, странах, зарплатах или условиях работы.",
+    q1:"🇩🇪 Германия", q2:"🇵🇱 Польша", q3:"💰 Зарплаты", q4:"📄 Документы", q5:"🏠 Жильё",
+    chat_placeholder:"Напишите вопрос...",
+    form_h:"✍️ Оставить заявку", form_p:"Заполните форму — оператор свяжется в течение 30 минут.",
+    f_name:"Имя", fp_name:"Ваше имя", f_phone:"Телефон",
+    f_country:"Страна интереса", f_choose:"Выберите страну",
+    f_exp:"Опыт работы", f_choose_exp:"Выберите опыт",
+    exp_no:"Нет опыта", exp_1:"До 1 года", exp_3:"1–3 года", exp_3p:"3+ лет",
+    f_note:"Комментарий (необязательно)", fp_note:"Специальность, пожелания...",
+    btn_send_form:"📩 Отправить заявку",
+    form_sending:"Отправляю...", form_ok:"✅ Заявка отправлена! Оператор свяжется с вами.", form_err:"❌ Ошибка. Попробуйте снова или напишите в Telegram.",
+    ops_h:"Операторы Mir Power", ops_online:"Операторы онлайн 24/7", ops_p:"Выберите удобный способ связи.",
+    op1:"Оператор 1", op2:"Оператор 2", op3:"Оператор 3", btn_call:"Позвонить",
+    faq_h:"FAQ — Частые вопросы",
+    faq1_q:"Нужен ли загранпаспорт?", faq1_a:"Да, для большинства стран нужен действующий загранпаспорт.",
+    faq2_q:"Есть ли жильё?", faq2_a:"Во многих вакансиях жильё предоставляется работодателем.",
+    faq3_q:"Нужен ли опыт?", faq3_a:"Есть вакансии для опытных работников и для новичков.",
+    faq4_q:"Сколько стоят услуги?", faq4_a:"Условия уточняются у оператора индивидуально.",
+    faq5_q:"Как быстро можно уехать?", faq5_a:"Сроки зависят от страны и готовности документов.",
+    admin_h:"Админ панель вакансий", admin_p:"Добавляйте новые вакансии прямо на сайте.",
+    a_country:"Страна: Германия", a_salary:"Зарплата: от 2200€",
+    a_work:"Работы: строитель, бетонщик...", a_house:"Жильё: предоставляется",
+    btn_add_job:"➕ Добавить вакансию", btn_clear_jobs:"🗑 Очистить добавленные",
+    admin_note:"Вакансии сохраняются в браузере. Для общей базы нужен сервер.",
+    map_h:"Маршрут до офиса", map_p:"Откройте карту и постройте маршрут.", btn_map:"Открыть маршрут",
+    contacts_h:"Связаться с Mir Power", contacts_p:"Получите информацию о доступных вакансиях.",
+    btn_tgbot:"Telegram бот", btn_tgchan:"Telegram канал",
+    ai_system:`Ты — AI-помощник агентства Mir Power (Узбекистан), которое помогает людям найти работу за рубежом.
+Отвечай на русском языке. Будь дружелюбным и профессиональным.
+Информация об агентстве:
+- Вакансии: строительство, ремонт, отделка, монтаж в 13 странах
+- Германия: от 2200€, строитель/отделочник/монтажник, жильё предоставляется
+- Польша: от 1600€, разнорабочий/плиточник/фасад, варианты с жильём
+- Япония: официальная работа, стройка и заводские работы, зарплата уточняется
+- Россия, Беларусь, Сербия, Грузия, Молдова, Бельгия, Болгария, Латвия, Литва, Хорватия — условия уточняются
+- Операторы работают 24/7 в Telegram: @Mir_Power_1, @Mir_Power_2, @MirPower_Kitob
+- Телефоны: +998876524222, +998886204222, +998885954222
+- Офис: Shahrisabz, Koica
+Если клиент хочет оставить заявку — скажи что может заполнить форму на сайте или написать оператору.
+Отвечай кратко — максимум 4-5 предложений.`
+  },
+  uz: {
+    nav_about:"Biz haqimizda", nav_jobs:"Vakansiyalar", nav_apply:"Ariza", nav_ai:"AI-chat",
+    nav_contacts:"Kontaktlar", nav_operators:"Operatorlar",
+    stat_views:"bugungi tashrif", stat_apps:"ariza qabul qilindi",
+    stat_vac:"dolzarb vakansiya", stat_countries:"mamlakat",
+    badge:"Xususiy Bandlik Agentligi", badge_live:"Dolzarb",
+    h_hero:'Chet elda ish <span class="highlight">Mir Power</span> orqali',
+    p_hero:"Biz mijozlarga chet elda ish topishga yordam beramiz — 13 mamlakatda 1500+ dolzarb vakansiya.",
+    btn_apply:"✍️ Ariza qoldirish", btn_channel:"💬 Telegram kanal",
+    hs1:"vakansiya", hs2:"mamlakat", hs3:"onlayn",
+    countries_title:"Qayerlarga jo'natamiz?",
+    c_work:"Ish", c_official:"Rasmiy",
+    c_ge:"Gruziya", c_md:"Moldova", c_by:"Belarus", c_ru:"Rossiya",
+    c_be:"Belgiya", c_bg:"Bolgariya", c_rs:"Serbiya", c_lv:"Latviya",
+    c_lt:"Litva", c_de:"Germaniya", c_hr:"Xorvatiya", c_pl:"Polsha", c_jp:"Yaponiya",
+    cnt1:"Muvaffaqiyatli chiqqanlar", cnt2:"Bu oy arizalar", cnt3:"Hamkor mamlakatlar", cnt4:"Bozordagi yillar",
+    about_h:"Mir Power nima qiladi?", about_p:"Vakansiya tanlab, har bosqichda hamroh bo'lamiz.",
+    ab1_h:"Vakansiya tanlash", ab1_p:"Mamlakat, ish, maosh va shartlarni profilingizga moslashtiring.",
+    ab2_h:"Maslahat", ab2_p:"Hujjatlar, talablar, turar joy va jo'nab ketish tartibini tushuntiramiz.",
+    ab3_h:"Hamrohlik", ab3_p:"Telegram yoki telefon orqali operatorlar bilan bog'laning.",
+    jobs_h:"Mamlakatlar bo'yicha vakansiyalar", jobs_p:"Mamlakat tanlang va mavjud yo'nalishlarni ko'ring.",
+    f_all:"Barchasi", f_other:"Boshqalar",
+    jm_work:"Ishlar:", jm_sal:"Maosh:", jm_house:"Turar joy:", jm_cond:"Shartlar:", jm_countries:"Mamlakatlar:",
+    jm_provided:"beriladi", jm_options:"variantlar bor", jm_discuss:"aniqlanadi",
+    jm_agree:"kelishuvga ko'ra", jm_depends:"vakansiyaga bog'liq",
+    jm_byvac:"vakansiyaga ko'ra", jm_official:"rasmiy ish",
+    j_de_work:"qurilishchi, bezakchi, montajchi, betonchi",
+    j_pl_work:"yordamchi, kafel, fasad, gipsokarton",
+    j_jp_work:"qurilish, zavod va texnik ishlar",
+    j_ru_work:"qurilish, ta'mir, g'isht, beton",
+    j_by_work:"montajchi, usta, usta yordamchisi",
+    j_rs_work:"qurilishchi, yordamchi, bezak",
+    j_other_h:"Boshqa mamlakatlar", j_other_work:"qurilish va ishchi yo'nalishlar",
+    j_other_countries:"Gruziya, Moldova, Belgiya, Bolgariya, Latviya, Litva, Xorvatiya",
+    j_other_cond:"operator bilan aniqlanadi",
+    btn_apply_short:"Ariza qoldirish",
+    steps_h:"Jarayon qanday kechadi?", steps_p:"Arizadan chiqib ketishgacha oddiy yo'l.",
+    s1_h:"Ariza", s1_p:"Saytda ariza qoldiring yoki operatorga yozing.",
+    s2_h:"Maslahat", s2_p:"Tajriba, mamlakat va hujjatlarni aniqlaymiz.",
+    s3_h:"Tanlash", s3_p:"Sizga mos vakansiya tanlaymiz.",
+    s4_h:"Rasmiylashtirish", s4_p:"Keyingi qadamlarni tushuntiramiz.",
+    ai_h:"🤖 AI-yordamchi", ai_p:"Vakansiyalar, mamlakatlar va shartlar haqida savol bering.",
+    ai_name:"Mir Power AI", ai_online:"Onlayn",
+    ai_welcome:"👋 Salom! Men Mir Power yordamchisiman. Vakansiyalar, mamlakatlar, maoshlar yoki ish shartlari haqida so'rang.",
+    q1:"🇩🇪 Germaniya", q2:"🇵🇱 Polsha", q3:"💰 Maoshlar", q4:"📄 Hujjatlar", q5:"🏠 Turar joy",
+    chat_placeholder:"Savolingizni yozing...",
+    form_h:"✍️ Ariza qoldirish", form_p:"Formani to'ldiring — operator 30 daqiqa ichida bog'lanadi.",
+    f_name:"Ism", fp_name:"Ismingiz", f_phone:"Telefon",
+    f_country:"Qiziqtirgan mamlakat", f_choose:"Mamlakat tanlang",
+    f_exp:"Ish tajribasi", f_choose_exp:"Tajriba tanlang",
+    exp_no:"Tajriba yo'q", exp_1:"1 yilgacha", exp_3:"1–3 yil", exp_3p:"3+ yil",
+    f_note:"Izoh (ixtiyoriy)", fp_note:"Mutaxassislik, istak...",
+    btn_send_form:"📩 Ariza yuborish",
+    form_sending:"Yuborilmoqda...", form_ok:"✅ Ariza yuborildi! Operator siz bilan bog'lanadi.", form_err:"❌ Xatolik. Qayta urinib ko'ring yoki Telegramga yozing.",
+    ops_h:"Mir Power operatorlari", ops_online:"Operatorlar 24/7 onlayn", ops_p:"Qulay muloqot usulini tanlang.",
+    op1:"Operator 1", op2:"Operator 2", op3:"Operator 3", btn_call:"Qo'ng'iroq",
+    faq_h:"FAQ — Ko'p so'raladigan savollar",
+    faq1_q:"Xorijiy pasport kerakmi?", faq1_a:"Ha, ko'p mamlakatlar uchun amal qilayotgan xorijiy pasport kerak.",
+    faq2_q:"Turar joy bormi?", faq2_a:"Ko'p vakansijalarda ish beruvchi tomonidan turar joy taqdim etiladi.",
+    faq3_q:"Tajriba kerakmi?", faq3_a:"Tajribali va yangi boshlovchilar uchun vakansiyalar mavjud.",
+    faq4_q:"Xizmat narxi qancha?", faq4_a:"Shartlar operator bilan individual ravishda aniqlanadi.",
+    faq5_q:"Qanchalik tez ketish mumkin?", faq5_a:"Muddatlar mamlakat va hujjatlar tayyor bo'lishiga bog'liq.",
+    admin_h:"Vakansiyalar admin paneli", admin_p:"Yangi vakansiyalar qo'shing.",
+    a_country:"Mamlakat: Germaniya", a_salary:"Maosh: 2200€ dan",
+    a_work:"Ishlar: qurilishchi, betonchi...", a_house:"Turar joy: beriladi",
+    btn_add_job:"➕ Vakansiya qo'shish", btn_clear_jobs:"🗑 Tozalash",
+    admin_note:"Vakansiyalar brauzerda saqlanadi. Umumiy baza uchun server kerak.",
+    map_h:"Ofisga yo'nalish", map_p:"Xaritani oching va yo'nalish quving.", btn_map:"Yo'nalishni ochish",
+    contacts_h:"Mir Power bilan bog'lanish", contacts_p:"Mavjud vakansiyalar haqida ma'lumot oling.",
+    btn_tgbot:"Telegram bot", btn_tgchan:"Telegram kanal",
+    ai_system:`Siz — Mir Power agentligining (O'zbekiston) AI yordamchisisiz. Chet elda ish topishga yordam berasiz.
+O'zbek tilida javob bering. Do'stona va professional bo'ling.
+Agentlik haqida ma'lumot:
+- Vakansiyalar: qurilish, ta'mir, bezak, montaj — 13 mamlakat
+- Germaniya: 2200€ dan, qurilishchi/bezakchi/montajchi, turar joy beriladi
+- Polsha: 1600€ dan, yordamchi/kafelchi/fasad, turar joy variantlari bor
+- Yaponiya: rasmiy ish, qurilish va zavod ishlari
+- Rossiya, Belarus, Serbiya, Gruziya, Moldova, Belgiya, Bolgariya, Latviya, Litva, Xorvatiya — shartlar aniqlanadi
+- Operatorlar 24/7: @Mir_Power_1, @Mir_Power_2, @MirPower_Kitob
+- Telefonlar: +998876524222, +998886204222, +998885954222
+Qisqa javob bering — maksimum 4-5 gap.`
+  },
+  en: {
+    nav_about:"About", nav_jobs:"Jobs", nav_apply:"Apply", nav_ai:"AI Chat",
+    nav_contacts:"Contacts", nav_operators:"Operators",
+    stat_views:"views today", stat_apps:"applications received",
+    stat_vac:"active vacancies", stat_countries:"destination countries",
+    badge:"Private Employment Agency", badge_live:"Live",
+    h_hero:'Work abroad with <span class="highlight">Mir Power</span>',
+    p_hero:"We help clients find jobs abroad — 1500+ active vacancies in 13 countries.",
+    btn_apply:"✍️ Apply now", btn_channel:"💬 Telegram channel",
+    hs1:"vacancies", hs2:"countries", hs3:"online",
+    countries_title:"Where do we send?",
+    c_work:"Work", c_official:"Official",
+    c_ge:"Georgia", c_md:"Moldova", c_by:"Belarus", c_ru:"Russia",
+    c_be:"Belgium", c_bg:"Bulgaria", c_rs:"Serbia", c_lv:"Latvia",
+    c_lt:"Lithuania", c_de:"Germany", c_hr:"Croatia", c_pl:"Poland", c_jp:"Japan",
+    cnt1:"Successful placements", cnt2:"Applications this month", cnt3:"Partner countries", cnt4:"Years in market",
+    about_h:"What does Mir Power do?", about_p:"We select vacancies and guide clients at every step.",
+    ab1_h:"Job matching", ab1_p:"We match country, job, salary and conditions to your profile.",
+    ab2_h:"Consultation", ab2_p:"We explain documents, requirements, housing and departure process.",
+    ab3_h:"Support", ab3_p:"Contact operators via Telegram or phone.",
+    jobs_h:"Jobs by country", jobs_p:"Choose a country and see available positions.",
+    f_all:"All", f_other:"Others",
+    jm_work:"Jobs:", jm_sal:"Salary:", jm_house:"Housing:", jm_cond:"Terms:", jm_countries:"Countries:",
+    jm_provided:"provided", jm_options:"options available", jm_discuss:"to be confirmed",
+    jm_agree:"negotiable", jm_depends:"depends on vacancy",
+    jm_byvac:"per vacancy", jm_official:"official employment",
+    j_de_work:"builder, finisher, installer, concrete worker",
+    j_pl_work:"general worker, tiler, facade, drywall",
+    j_jp_work:"construction, factory and technical work",
+    j_ru_work:"construction, repair, bricklaying, concrete",
+    j_by_work:"installer, master, assistant",
+    j_rs_work:"builder, assistant, finishing",
+    j_other_h:"Other countries", j_other_work:"construction and labour",
+    j_other_countries:"Georgia, Moldova, Belgium, Bulgaria, Latvia, Lithuania, Croatia",
+    j_other_cond:"confirm with operator",
+    btn_apply_short:"Apply",
+    steps_h:"How does it work?", steps_p:"Simple path from application to departure.",
+    s1_h:"Apply", s1_p:"Submit an application on the site or message an operator.",
+    s2_h:"Consultation", s2_p:"We clarify experience, desired country and documents.",
+    s3_h:"Matching", s3_p:"We select the right vacancy for your profile.",
+    s4_h:"Processing", s4_p:"We explain next steps and help you prepare.",
+    ai_h:"🤖 AI Assistant", ai_p:"Ask about vacancies, countries and work conditions.",
+    ai_name:"Mir Power AI", ai_online:"Online",
+    ai_welcome:"👋 Hello! I'm the Mir Power assistant. Ask me about vacancies, countries, salaries or work conditions.",
+    q1:"🇩🇪 Germany", q2:"🇵🇱 Poland", q3:"💰 Salaries", q4:"📄 Documents", q5:"🏠 Housing",
+    chat_placeholder:"Type your question...",
+    form_h:"✍️ Apply now", form_p:"Fill out the form — an operator will contact you within 30 minutes.",
+    f_name:"Name", fp_name:"Your name", f_phone:"Phone",
+    f_country:"Country of interest", f_choose:"Select country",
+    f_exp:"Work experience", f_choose_exp:"Select experience",
+    exp_no:"No experience", exp_1:"Under 1 year", exp_3:"1–3 years", exp_3p:"3+ years",
+    f_note:"Comment (optional)", fp_note:"Specialty, preferences...",
+    btn_send_form:"📩 Send application",
+    form_sending:"Sending...", form_ok:"✅ Application sent! An operator will contact you.", form_err:"❌ Error. Please try again or write to Telegram.",
+    ops_h:"Mir Power operators", ops_online:"Operators online 24/7", ops_p:"Choose a convenient contact method.",
+    op1:"Operator 1", op2:"Operator 2", op3:"Operator 3", btn_call:"Call",
+    faq_h:"FAQ — Frequently asked questions",
+    faq1_q:"Is a passport required?", faq1_a:"Yes, a valid international passport is required for most countries.",
+    faq2_q:"Is housing provided?", faq2_a:"Many vacancies include housing provided by the employer.",
+    faq3_q:"Is experience required?", faq3_a:"There are vacancies for both experienced workers and beginners.",
+    faq4_q:"How much do services cost?", faq4_a:"Terms are discussed individually with an operator.",
+    faq5_q:"How quickly can I leave?", faq5_a:"Timelines depend on the country and document readiness.",
+    admin_h:"Vacancy admin panel", admin_p:"Add new vacancies directly on the site.",
+    a_country:"Country: Germany", a_salary:"Salary: from €2200",
+    a_work:"Jobs: builder, concrete worker...", a_house:"Housing: provided",
+    btn_add_job:"➕ Add vacancy", btn_clear_jobs:"🗑 Clear added",
+    admin_note:"Vacancies are stored in the browser. A server is needed for shared data.",
+    map_h:"Route to office", map_p:"Open the map and build a route.", btn_map:"Open route",
+    contacts_h:"Contact Mir Power", contacts_p:"Get information about available vacancies.",
+    btn_tgbot:"Telegram bot", btn_tgchan:"Telegram channel",
+    ai_system:`You are an AI assistant for Mir Power agency (Uzbekistan), helping people find jobs abroad.
+Reply in English. Be friendly and professional.
+Agency info:
+- Vacancies: construction, repair, finishing, installation in 13 countries
+- Germany: from €2200, builder/finisher/installer, housing provided
+- Poland: from €1600, general worker/tiler/facade, housing options available
+- Japan: official employment, construction and factory work
+- Russia, Belarus, Serbia, Georgia, Moldova, Belgium, Bulgaria, Latvia, Lithuania, Croatia — terms to be confirmed
+- Operators 24/7: @Mir_Power_1, @Mir_Power_2, @MirPower_Kitob
+- Phones: +998876524222, +998886204222, +998885954222
+Give brief answers — max 4-5 sentences.`
+  }
+};
+
+let currentLang = 'ru';
+
+function setLang(lang) {
+  currentLang = lang;
+  const t = T[lang];
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if (b.textContent.includes(lang==='ru'?'🇷🇺':lang==='uz'?'🇺🇿':'🇬🇧')) b.classList.add('active');
+  });
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+  // Update initial chat welcome
+  const msgs = document.getElementById('chatMessages');
+  const first = msgs.querySelector('.bubble.bot');
+  if (first && t.ai_welcome) first.innerHTML = t.ai_welcome;
+  // Update html lang
+  document.documentElement.lang = lang;
+}
+
+/* ──────────── BURGER ──────────── */
+function toggleMobile() {
+  const btn = document.getElementById('burgerBtn');
+  const menu = document.getElementById('mobileMenu');
+  btn.classList.toggle('open');
+  menu.classList.toggle('open');
+}
+function closeMobile() {
+  document.getElementById('burgerBtn').classList.remove('open');
+  document.getElementById('mobileMenu').classList.remove('open');
+}
+
+/* ──────────── FILTER JOBS ──────────── */
+function filterJobs(country, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.querySelectorAll('.job-card').forEach(card => {
+    card.classList.toggle('hide', country !== 'all' && card.dataset.country !== country);
+  });
+}
+
+/* ──────────── FAQ ──────────── */
+function toggleFaq(el) {
+  const item = el.closest('.faq-item');
+  item.classList.toggle('open');
+}
+
+/* ──────────── COUNTERS ──────────── */
+function animateCount(el, target, duration) {
+  let start = 0, step = target / (duration / 16);
+  const interval = setInterval(() => {
+    start = Math.min(start + step, target);
+    el.textContent = Math.floor(start).toLocaleString();
+    if (start >= target) clearInterval(interval);
+  }, 16);
+}
+
+const counterTargets = { c1: 847, c2: 143, c3: 13, c4: 6 };
+let countersStarted = false;
+const counterObserver = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting && !countersStarted) {
+    countersStarted = true;
+    Object.entries(counterTargets).forEach(([id, val]) => {
+      animateCount(document.getElementById(id), val, 1800);
+    });
+  }
+}, { threshold: 0.3 });
+counterObserver.observe(document.querySelector('.counter-strip'));
+
+/* ──────────── VIEW & APP COUNTERS ──────────── */
+(function initCounters() {
+  const today = new Date().toDateString();
+  const stored = JSON.parse(localStorage.getItem('mpStats') || '{}');
+  if (stored.date !== today) {
+    stored.date = today;
+    stored.views = Math.floor(Math.random() * 40) + 80; // base for today
+    stored.apps = stored.apps || 0;
+    localStorage.setItem('mpStats', JSON.stringify(stored));
+  }
+  stored.views = (stored.views || 80) + 1;
+  localStorage.setItem('mpStats', JSON.stringify(stored));
+
+  document.getElementById('viewCount').textContent = stored.views;
+  document.getElementById('appCount').textContent = stored.apps || 0;
+})();
+
+/* ──────────── FORM SUBMIT → TELEGRAM BOT ──────────── */
+// ⚠️ ЗАМЕНИТЕ НА СВОЙ TELEGRAM BOT TOKEN И CHAT_ID
+const TG_TOKEN  = '8066050219:AAG8UZGc1BCzyxKg6ESD4bPNBzvAKUs98hs';   // <-- ваш токен
+const TG_CHAT   = '8559816706';     // <-- ваш chat_id
+
+async function submitForm() {
+  const t = T[currentLang];
+  const name    = document.getElementById('fName').value.trim();
+  const phone   = document.getElementById('fPhone').value.trim();
+  const country = document.getElementById('fCountry').value;
+  const exp     = document.getElementById('fExp').value;
+  const note    = document.getElementById('fNote').value.trim();
+
+  if (!name || !phone) {
+    alert(currentLang === 'uz' ? 'Ism va telefonni kiriting' : currentLang === 'en' ? 'Please enter name and phone' : 'Введите имя и телефон');
+    return;
+  }
+
+  const btn = document.getElementById('formBtn');
+  const status = document.getElementById('formStatus');
+  btn.disabled = true;
+  btn.textContent = t.form_sending;
+
+  const text = `🆕 Новая заявка — Mir Power\n\n👤 Имя: ${name}\n📞 Телефон: ${phone}\n🌍 Страна: ${country || '—'}\n💼 Опыт: ${exp || '—'}\n📝 Заметка: ${note || '—'}\n\n🌐 Язык интерфейса: ${currentLang.toUpperCase()}`;
+
+  try {
+    if (TG_TOKEN !== '8066050219:AAG8UZGc1BCzyxKg6ESD4bPNBzvAKUs98hs') {
+      const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: 8559816706, text, parse_mode: 'HTML' })
       });
+      if (!res.ok) throw new Error('TG error');
+   } else {
+      // Demo mode — simulate success
+      await new Promise(r => setTimeout(r, 800));
     }
 
-    function filterJobs(country) {
-      document.querySelectorAll('.job-card').forEach((card) => {
-        const shouldShow = country === 'all' || card.dataset.country === country;
-        card.classList.toggle('hide', !shouldShow);
-      });
-    }
+    // update app counter
+    const stored = JSON.parse(localStorage.getItem('mpStats') || '{}');
+    stored.apps = (stored.apps || 0) + 1;
+    localStorage.setItem('mpStats', JSON.stringify(stored));
+    document.getElementById('appCount').textContent = stored.apps;
 
-    function addJob() {
-      const country = document.getElementById('adminCountry').value.trim();
-      const flag = document.getElementById('adminFlag').value.trim() || '🌍';
-      const category = document.getElementById('adminCategory').value;
-      const salary = document.getElementById('adminSalary').value.trim();
-      const work = document.getElementById('adminWork').value.trim();
-      const housing = document.getElementById('adminHousing').value.trim();
+    status.className = 'form-status success';
+    status.style.display = 'block';
+    status.textContent = t.form_ok;
+    document.getElementById('fName').value = '';
+    document.getElementById('fPhone').value = '';
+    document.getElementById('fCountry').value = '';
+    document.getElementById('fExp').value = '';
+    document.getElementById('fNote').value = '';
+  } catch(e) {
+    status.className = 'form-status error';
+    status.style.display = 'block';
+    status.textContent = t.form_err;
+  }
 
-      if (!country || !work || !salary) {
-        alert('Заполните страну, работы и зарплату');
-        return;
-      }
+  btn.disabled = false;
+  btn.innerHTML = t.btn_send_form;
+  setTimeout(() => { status.style.display = 'none'; }, 6000);
+}
 
-      const jobs = JSON.parse(localStorage.getItem('mirPowerJobs') || '[]');
-      jobs.push({ country, flag, category, salary, work, housing });
-      localStorage.setItem('mirPowerJobs', JSON.stringify(jobs));
+/* ──────────── AI CHAT ──────────── */
+const chatMessages = document.getElementById('chatMessages');
 
-      renderAddedJobs();
+function addBubble(text, type) {
+  const div = document.createElement('div');
+  div.className = `bubble ${type}`;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return div;
+}
 
-      document.getElementById('adminCountry').value = '';
-      document.getElementById('adminFlag').value = '';
-      document.getElementById('adminSalary').value = '';
-      document.getElementById('adminWork').value = '';
-      document.getElementById('adminHousing').value = '';
+function showTyping() {
+  const div = document.createElement('div');
+  div.className = 'bubble bot';
+  div.id = 'typing';
+  div.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
 
-      alert('Вакансия добавлена');
-    }
+function removeTyping() {
+  const el = document.getElementById('typing');
+  if (el) el.remove();
+}
 
-    function renderAddedJobs() {
-      const jobsList = document.getElementById('jobsList');
-      if (!jobsList) return;
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('quickBtns').style.display = 'none';
 
-      document.querySelectorAll('.added-job').forEach((el) => el.remove());
-      const jobs = JSON.parse(localStorage.getItem('mirPowerJobs') || '[]');
+  addBubble(text, 'user');
+  showTyping();
 
-      jobs.forEach((job) => {
-        const card = document.createElement('div');
-        card.className = 'info-card job-card added-job';
-        card.dataset.country = job.category || 'other';
-        card.innerHTML = `
-          <div class="icon">${job.flag}</div>
-          <h3>${job.country}</h3>
-          <div class="job-meta">
-            <div><b>Работы:</b> ${job.work}</div>
-            <div><b>Зарплата:</b> ${job.salary}</div>
-            <div><b>Жильё:</b> ${job.housing || 'уточняется'}</div>
-          </div>
-          <br />
-          <a class="btn btn-primary" href="#operators">Оставить заявку</a>
-        `;
-        jobsList.appendChild(card);
-      });
-    }
+  const t = T[currentLang];
 
-    function clearAddedJobs() {
-      if (confirm('Удалить добавленные вакансии?')) {
-        localStorage.removeItem('mirPowerJobs');
-        renderAddedJobs();
-      }
-    }
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 400,
+        system: t.ai_system,
+        messages: [{ role: 'user', content: text }]
+      })
+    });
 
-    window.addEventListener('load', renderAddedJobs);
-  </script></body>
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || '...';
+    removeTyping();
+    addBubble(reply, 'bot');
+  } catch(e) {
+    removeTyping();
+    const fallback = currentLang === 'uz'
+      ? 'Kechirasiz, hozir javob berishda muammo bor. Operatorga yozing: @Mir_Power_1'
+      : currentLang === 'en'
+      ? 'Sorry, having trouble responding right now. Contact an operator: @Mir_Power_1'
+      : 'Извините, сейчас есть проблема с ответом. Напишите оператору: @Mir_Power_1';
+    addBubble(fallback, 'bot');
+  }
+
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function sendQuick(text) {
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+/* ──────────── ADMIN PANEL ──────────── */
+function addJob() {
+  const country  = document.getElementById('adminCountry').value.trim();
+  const flag     = document.getElementById('adminFlag').value.trim() || '🌍';
+  const category = document.getElementById('adminCategory').value;
+  const salary   = document.getElementById('adminSalary').value.trim();
+  const work     = document.getElementById('adminWork').value.trim();
+  const housing  = document.getElementById('adminHousing').value.trim();
+
+  if (!country || !work || !salary) {
+    alert(currentLang === 'uz' ? "Mamlakat, ishlar va maoshni kiriting" : currentLang === 'en' ? "Enter country, jobs and salary" : "Заполните страну, работы и зарплату");
+    return;
+  }
+
+  const jobs = JSON.parse(localStorage.getItem('mirPowerJobs') || '[]');
+  jobs.push({ country, flag, category, salary, work, housing });
+  localStorage.setItem('mirPowerJobs', JSON.stringify(jobs));
+  renderAddedJobs();
+
+  ['adminCountry','adminFlag','adminSalary','adminWork','adminHousing'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  alert(currentLang === 'uz' ? 'Vakansiya qo\'shildi' : currentLang === 'en' ? 'Vacancy added' : 'Вакансия добавлена');
+}
+
+function renderAddedJobs() {
+  document.querySelectorAll('.added-job').forEach(el => el.remove());
+  const jobs = JSON.parse(localStorage.getItem('mirPowerJobs') || '[]');
+  const list = document.getElementById('jobsList');
+  jobs.forEach(job => {
+    const div = document.createElement('div');
+    div.className = 'card job-card added-job';
+    div.dataset.country = job.category || 'other';
+    div.innerHTML = `
+      <div class="card-icon">${job.flag}</div>
+      <h3>${job.country}</h3>
+      <div class="job-meta">
+        <div class="job-meta-item"><b>Работы:</b> ${job.work}</div>
+        <div class="job-meta-item"><b>Зарплата:</b> ${job.salary}</div>
+        <div class="job-meta-item"><b>Жильё:</b> ${job.housing || 'уточняется'}</div>
+      </div>
+      <a class="btn btn-primary btn-sm" href="#apply">Оставить заявку</a>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function clearAddedJobs() {
+  const msg = currentLang === 'uz' ? "Qo'shilgan vakansiyalarni o'chirish?" : currentLang === 'en' ? 'Delete added vacancies?' : 'Удалить добавленные вакансии?';
+  if (confirm(msg)) { localStorage.removeItem('mirPowerJobs'); renderAddedJobs(); }
+}
+
+/* ──────────── INIT ──────────── */
+window.addEventListener('load', renderAddedJobs);
+</script>
+</body>
 </html>
