@@ -1389,11 +1389,11 @@ async function submitForm() {
   const text = `🆕 Новая заявка — Mir Power\n\n👤 Имя: ${name}\n📞 Телефон: ${phone}\n🌍 Страна: ${country || '—'}\n💼 Опыт: ${exp || '—'}\n📝 Заметка: ${note || '—'}\n\n🌐 Язык интерфейса: ${currentLang.toUpperCase()}`;
 
   try {
-    if (TG_TOKEN !== '8066050219:AAG8UZGc1BCzyxKg6ESD4bPNBzvAKUs98hs') {
+    if (TG_TOKEN !== 'YOUR_BOT_TOKE') {
       const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: 8559816706, text, parse_mode: 'HTML' })
+        body: JSON.stringify({ chat_id: TG_CHAT, text, parse_mode: 'HTML' })
       });
       if (!res.ok) throw new Error('TG error');
    } else {
